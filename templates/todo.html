@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}To-do органайзер — Workspace{% endblock %}
+
+{% block page_head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/todo.css') }}">
+  <script defer src="{{ url_for('static', filename='js/todo.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+  <main class="todo-page">
+    <section class="todo-intro-card" aria-labelledby="todoTitle">
+      <div class="todo-intro-icon" aria-hidden="true">✓</div>
+      <p class="todo-eyebrow">РАЗДЕЛ ПРИЛОЖЕНИЯ</p>
+      <h2 id="todoTitle">To-do органайзер</h2>
+      <p class="todo-description">
+        Здесь будет список задач, сроки выполнения и управление приоритетами.
+        Раздел подготовлен для реализации отдельной веткой, чтобы изменения можно было
+        удобно объединить через Pull Request.
+      </p>
+      <div class="todo-feature-list">
+        <div class="todo-feature-item"><span aria-hidden="true">○</span> Список задач и статусы</div>
+        <div class="todo-feature-item"><span aria-hidden="true">◷</span> Сроки и приоритеты</div>
+        <div class="todo-feature-item"><span aria-hidden="true">▤</span> Фильтрация и поиск задач</div>
+      </div>
+      <p class="todo-note">
+        Пока это стартовая страница — функциональность органайзера можно добавить в
+        <code>templates/todo.html</code>, <code>static/css/todo.css</code> и
+        <code>static/js/todo.js</code>. Маршрут уже подключён через <code>todo.py</code>.
+      </p>
+    </section>
+  </main>
+{% endblock %}

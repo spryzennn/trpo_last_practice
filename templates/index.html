@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Текстовый редактор — Workspace{% endblock %}
+
+{% block page_head %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mammoth@1.9.0/mammoth.browser.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/docx@9.7.1/dist/index.iife.js"></script>
+  <script defer src="{{ url_for('static', filename='js/editor.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+  <main class="app-layout">
+    <aside class="sidebar" aria-label="Управление документами">
+      <button id="newDocumentButton" class="button button-primary button-wide" type="button">
+        <span aria-hidden="true">＋</span> Новый документ
+      </button>
+
+      <button id="importButton" class="button button-secondary button-wide" type="button">
+        <span aria-hidden="true">↑</span> Импорт DOCX
+      </button>
+      <input id="importFile" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+
+      <div class="sidebar-heading">
+        <h2>Мои документы</h2>
+        <span id="documentCount" class="count-pill">0</span>
+      </div>
+      <div id="documentList" class="document-list" aria-live="polite">
+        <p class="empty-list">Загрузка документов…</p>
+      </div>
+    </aside>
+
+    <section class="workspace" aria-label="Редактор документа">
+      <div class="document-topbar">
+        <label class="sr-only" for="documentTitle">Название документа</label>
+        <input id="documentTitle" class="title-input" type="text" maxlength="160"
+               placeholder="Название документа" autocomplete="off">
+
+        <div class="topbar-actions">
+          <span id="saveStatus" class="save-status" role="status" aria-live="polite">
+            Подготовка редактора…
+          </span>
+          <button id="downloadButton" class="button button-primary" type="button">
+            ↓ <span>Скачать DOCX</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="editorLoading" class="loading-banner">
+        Загружаем редактор…
+      </div>
+
+      <div id="editorApp" class="editor-app" hidden>
+        <div id="toolbar" class="editor-toolbar" aria-label="Форматирование текста">
+          <span class="ql-formats">
+            <select class="ql-header" aria-label="Стиль текста">
+              <option value="1">Заголовок 1</option>
+              <option value="2">Заголовок 2</option>
+              <option value="3">Заголовок 3</option>
+              <option value="" selected>Обычный текст</option>
+            </select>
+          </span>
+          <span class="ql-formats">
+            <button class="ql-bold" aria-label="Жирный" type="button"></button>
+            <button class="ql-italic" aria-label="Курсив" type="button"></button>
+            <button class="ql-underline" aria-label="Подчёркнутый" type="button"></button>
+            <button class="ql-strike" aria-label="Зачёркнутый" type="button"></button>
+          </span>
+          <span class="ql-formats">
+            <button class="ql-list" value="ordered" aria-label="Нумерованный список" type="button"></button>
+            <button class="ql-list" value="bullet" aria-label="Маркированный список" type="button"></button>
+            <button class="ql-blockquote" aria-label="Цитата" type="button"></button>
+            <button class="ql-code-block" aria-label="Блок кода" type="button"></button>
+          </span>
+          <span class="ql-formats">
+            <select class="ql-align" aria-label="Выравнивание текста">
+              <option selected></option>
+              <option value="center"></option>
+              <option value="right"></option>
+              <option value="justify"></option>
+            </select>
+            <button class="ql-link" aria-label="Добавить ссылку" type="button"></button>
+          </span>
+        </div>
+
+        <div class="search-panel">
+          <div class="search-input-wrap">
+            <span aria-hidden="true">⌕</span>
+            <label class="sr-only" for="searchInput">Поиск по документу</label>
+            <input id="searchInput" type="search" placeholder="Найти в документе…" autocomplete="off">
+          </div>
+          <span id="searchStatus" class="search-status" aria-live="polite">Введите текст для поиска</span>
+          <div class="search-actions">
+            <button id="searchPrevButton" class="icon-button" type="button" aria-label="Предыдущее совпадение" title="Предыдущее совпадение">↑</button>
+            <button id="searchNextButton" class="icon-button" type="button" aria-label="Следующее совпадение" title="Следующее совпадение">↓</button>
+          </div>
+        </div>
+
+        <div class="editor-card">
+          <div id="editor" aria-label="Текст документа"></div>
+        </div>
+
+        <footer class="editor-footer">
+          <div class="counter-group">
+            <span id="characterCount">Символов: 0</span>
+            <span class="footer-separator">·</span>
+            <span id="wordCount">Слов: 0</span>
+          </div>
+          <span class="footer-hint">Изменения сохраняются автоматически</span>
+        </footer>
+      </div>
+
+      <div id="editorError" class="error-banner" hidden>
+        Не удалось загрузить Quill. Проверь подключение к интернету и обнови страницу.
+      </div>
+    </section>
+  </main>
+{% endblock %}

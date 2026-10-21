@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Рабочее пространство: текстовый редактор и to-do органайзер">
+  <title>{% block title %}Workspace{% endblock %}</title>
+  {% block page_head %}{% endblock %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">W</div>
+        <div>
+          <h1>Workspace</h1>
+          <p>Задачи и документы в одном месте</p>
+        </div>
+      </div>
+      <div class="header-note">
+        {% if active_page == 'editor' %}
+          <span class="storage-dot" aria-hidden="true"></span>
+          Документы хранятся в этом браузере
+        {% else %}
+          <span class="storage-dot storage-dot-pending" aria-hidden="true"></span>
+          Раздел органайзера готов к разработке
+        {% endif %}
+      </div>
+    </header>
+
+    <nav class="app-tabs" aria-label="Разделы приложения">
+      <a class="app-tab{% if active_page == 'todo' %} active{% endif %}"
+         href="{{ url_for('todo.index') }}"{% if active_page == 'todo' %} aria-current="page"{% endif %}>
+        <span aria-hidden="true">✓</span> To-do органайзер
+      </a>
+      <a class="app-tab{% if active_page == 'editor' %} active{% endif %}"
+         href="{{ url_for('index') }}"{% if active_page == 'editor' %} aria-current="page"{% endif %}>
+        <span aria-hidden="true">▤</span> Текстовый редактор
+      </a>
+    </nav>
+
+    {% block content %}{% endblock %}
+  </div>
+  {% block page_scripts %}{% endblock %}
+</body>
+</html>
