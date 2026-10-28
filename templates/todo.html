@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}To-do органайзер — Workspace{% endblock %}
+{% block title %}To-do список — Workspace{% endblock %}
 
 {% block page_head %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/todo.css') }}">
@@ -8,26 +8,79 @@
 {% endblock %}
 
 {% block content %}
-  <main class="todo-page">
-    <section class="todo-intro-card" aria-labelledby="todoTitle">
-      <div class="todo-intro-icon" aria-hidden="true">✓</div>
-      <p class="todo-eyebrow">РАЗДЕЛ ПРИЛОЖЕНИЯ</p>
-      <h2 id="todoTitle">To-do органайзер</h2>
-      <p class="todo-description">
-        Здесь будет список задач, сроки выполнения и управление приоритетами.
-        Раздел подготовлен для реализации отдельной веткой, чтобы изменения можно было
-        удобно объединить через Pull Request.
-      </p>
-      <div class="todo-feature-list">
-        <div class="todo-feature-item"><span aria-hidden="true">○</span> Список задач и статусы</div>
-        <div class="todo-feature-item"><span aria-hidden="true">◷</span> Сроки и приоритеты</div>
-        <div class="todo-feature-item"><span aria-hidden="true">▤</span> Фильтрация и поиск задач</div>
+<main class="todo-page">
+  <section class="todo-heading">
+    <div>
+      <p class="todo-eyebrow">ПЛАНИРУЙТЕ СВОЙ ДЕНЬ</p>
+      <h2>Мои задачи</h2>
+      <p class="todo-description">Соберите дела в одном месте и отмечайте выполненное.</p>
+    </div>
+    <div class="todo-summary" aria-live="polite">
+      <span id="taskTotal">0</span><small>всего задач</small>
+    </div>
+  </section>
+
+  {% if db_error %}
+  <section class="todo-error" role="alert">
+    <strong>Не удалось подключиться к базе данных PostgreSQL.</strong>
+    <p>{{ db_error }}</p>
+    <p>Проверьте, что PostgreSQL запущен и переменная окружения <code>DATABASE_URL</code> настроена.</p>
+  </section>
+  {% else %}
+  <section class="todo-create-card">
+    <h3>Добавить задачу</h3>
+    <form id="taskForm">
+      <label class="field-label" for="taskTitle">Название задачи <span aria-hidden="true">*</span></label>
+      <input id="taskTitle" name="title" maxlength="200" placeholder="Например, подготовить отчёт" required>
+      <label class="field-label" for="taskDescription">Описание</label>
+      <textarea id="taskDescription" name="description" rows="2" placeholder="Дополнительные детали (необязательно)"></textarea>
+      <div class="form-row">
+        <div class="form-field">
+          <label class="field-label" for="taskDueDate">Срок выполнения</label>
+          <input id="taskDueDate" name="due_date" type="date">
+        </div>
+        <div class="form-field">
+          <label class="field-label" for="taskPriority">Приоритет</label>
+          <select id="taskPriority" name="priority">
+            <option value="low">Низкий</option>
+            <option value="medium" selected>Обычный</option>
+            <option value="high">Высокий</option>
+          </select>
+        </div>
       </div>
-      <p class="todo-note">
-        Пока это стартовая страница — функциональность органайзера можно добавить в
-        <code>templates/todo.html</code>, <code>static/css/todo.css</code> и
-        <code>static/js/todo.js</code>. Маршрут уже подключён через <code>todo.py</code>.
-      </p>
-    </section>
-  </main>
+      <div class="form-footer">
+        <span class="form-hint">* Обязательное поле</span>
+        <button class="button button-primary" type="submit">＋ Добавить задачу</button>
+      </div>
+      <p id="formMessage" class="todo-message" role="status"></p>
+    </form>
+  </section>
+
+  <section class="todo-list-card">
+    <div class="list-toolbar">
+      <div>
+        <h3>Список задач</h3>
+        <p id="taskProgress" class="muted-text">Загрузка задач…</p>
+      </div>
+      <label class="filter-wrap" for="taskFilter">
+        <span class="sr-only">Фильтр задач</span>
+        <select id="taskFilter">
+          <option value="all">Все задачи</option>
+          <option value="active">Активные</option>
+          <option value="completed">Выполненные</option>
+        </select>
+      </label>
+    </div>
+    <div class="todo-search-wrap">
+      <span aria-hidden="true">⌕</span>
+      <label class="sr-only" for="taskSearch">Поиск задач</label>
+      <input id="taskSearch" type="search" placeholder="Поиск по названию и описанию…">
+    </div>
+    <div id="taskList" class="task-list" aria-live="polite">
+      <p class="task-empty">Загружаем задачи…</p>
+    </div>
+  </section>
+  <p id="globalMessage" class="todo-message" role="status"></p>
+  {% endif %}
+</main>
 {% endblock %}

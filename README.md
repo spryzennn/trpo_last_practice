@@ -44,7 +44,104 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-### 4. Запустите приложение
+### 4. Создание и наполнение БД
+
+```
+CREATE DATABASE workspace;
+GRANT USAGE, CREATE ON SCHEMA public TO workspace_user;
+```
+
+Укажите строку подключения в переменной окружения `DATABASE_URL`.
+
+**Windows PowerShell:**
+```powershell
+$env:DATABASE_URL = "postgresql://workspace_user:change_this_password@localhost:5432/workspace"
+```
+
+**macOS / Linux:**
+```bash
+export DATABASE_URL="postgresql://workspace_user:change_this_password@localhost:5432/workspace"
+```
+
+Таблица `todo_tasks` создаётся автоматически при первом открытии раздела `/todo`. Необходимо, чтобы пользователь базы данных имел право создавать таблицы.
+
+```
+INSERT INTO todo_tasks
+    (title, description, priority, due_date, is_completed)
+VALUES
+    (
+        'Разработать главную страницу',
+        'Создать и оформить главную страницу приложения.',
+        'high',
+        CURRENT_DATE + 1,
+        FALSE
+    ),
+    (
+        'Реализовать авторизацию',
+        'Добавить регистрацию и вход пользователей в систему.',
+        'high',
+        CURRENT_DATE + 3,
+        FALSE
+    ),
+    (
+        'Настроить базу данных PostgreSQL',
+        'Проверить подключение приложения к базе данных.',
+        'high',
+        CURRENT_DATE,
+        FALSE
+    ),
+    (
+        'Создать интерфейс To-do List',
+        'Реализовать отображение списка задач и формы добавления.',
+        'medium',
+        CURRENT_DATE + 2,
+        FALSE
+    ),
+    (
+        'Добавить поиск задач',
+        'Реализовать поиск по названию и описанию.',
+        'medium',
+        CURRENT_DATE + 5,
+        FALSE
+    ),
+    (
+        'Проверить адаптивность интерфейса',
+        'Убедиться, что приложение корректно отображается на разных экранах.',
+        'medium',
+        CURRENT_DATE + 7,
+        FALSE
+    ),
+    (
+        'Обновить документацию',
+        'Описать установку, настройку и запуск приложения.',
+        'low',
+        CURRENT_DATE + 10,
+        FALSE
+    ),
+    (
+        'Изучить возможности Flask',
+        'Познакомиться с дополнительными возможностями Flask.',
+        'low',
+        CURRENT_DATE + 14,
+        FALSE
+    ),
+    (
+        'Создать структуру проекта',
+        'Подготовить папки и основные файлы приложения.',
+        'medium',
+        CURRENT_DATE - 2,
+        TRUE
+    ),
+    (
+        'Настроить окружение Python',
+        'Установить необходимые библиотеки и подготовить окружение.',
+        'low',
+        CURRENT_DATE - 1,
+        TRUE
+    );
+```
+
+### 5. Запустите приложение
 
 ```bash
 flask --app app run --debug
@@ -60,6 +157,10 @@ flask --app app run --debug
 ## Где хранятся документы
 
 На текущем этапе текстовые документы сохраняются в **IndexedDB текущего браузера**, а не в базе данных на сервере. Они доступны в том же браузере и профиле пользователя. Очистка данных сайта может удалить документы. Это локальное хранилище не синхронизируется автоматически между компьютерами участников проекта.
+
+## Где хранятся задачи
+
+Задачи хранятся в Базе данных, а значит имеют постоянный характер и органайзером можно пользоваться на различных устройствах.
 
 ## Совместная работа через Git и Pull Request
 
@@ -105,6 +206,7 @@ trpo_last_practice/
 ├── app.py
 ├── todo.py
 ├── requirements.txt
+├── .env
 ├── README.md
 ├── templates/
 │   ├── base.html
